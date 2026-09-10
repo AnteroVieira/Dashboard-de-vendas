@@ -1,42 +1,40 @@
-cat << 'EOF' > README.md
-# 📊 Dashboard Inteligente de Vendas
+# 📊 Dashboard de Vendas Inteligente
 
-Um sistema web completo, moderno e responsivo para gerenciamento de produtos e controle de estoque em tempo real. Desenvolvido com **React** no frontend, **Node.js / Express** no backend e **SQLite** para armazenamento local estável e persistente.
+> Um sistema full-stack moderno desenvolvido para gerenciamento, monitoramento e análise de dados de vendas, projetado com foco em performance, usabilidade e organização de código.
 
 ---
 
-## ✨ Funcionalidades Principais
+### 🚀 Acesso Rápido ao Projeto Online
+Você pode testar a aplicação em tempo real direto no seu navegador, sem precisar instalar nada:
 
-* **Cadastro Dinâmico de Produtos**: Adicione itens informando Nome, Categoria (com seleção rápida via menu suspenso), Preço e Estoque.
-* **Menu de Categorias Organizado**: Suporte integrado para as principais categorias (*Móveis, Eletrodomésticos, Moda, Telefonia, Informática e Beleza*).
-* **Listagem em Tempo Real**: Atualização instantânea da interface assim que um novo produto é cadastrado.
-* **Limpeza Definitiva do Banco de Dados**: Funcionalidade segura para resetar e limpar todos os registros do banco com apenas um clique.
-* **Design Focado em Produtividade**: Interface centralizada com paleta de cores em tons de azul suave, reduzindo a fadiga visual e trazendo um visual profissional.
+[![Acessar Dashboard Online](https://img.shields.io/badge/🔥_ACESSAR_DASHBOARD_ONLINE-00C7B7?style=for-the-badge&logo=surge&logoColor=white)](http://meu-dashboard-vendas.surge.sh)
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Frontend**: React, Vite, CSS moderno.
-* **Backend**: Node.js, Express, JavaScript (ES Modules).
-* **Banco de Dados**: SQLite (local, leve e livre de dependências de nuvem instáveis).
+O projeto foi construído utilizando tecnologias modernas de mercado:
+
+* **Frontend:** React, Vite, CSS Moderno / Componentes estilizados.
+* **Backend:** Node.js, Express.
+* **Banco de Dados:** SQLite (leve, rápido e integrado).
+* **Hospedagem / Deploy:** Surge.sh (Frontend).
 
 ---
 
-## 🚀 Como Acessar e Rodar o Projeto
+## ✨ Funcionalidades Principais
 
-Você pode acessar a prévia do ambiente de desenvolvimento diretamente pelo link ativo do GitHub Codespaces ou executar o projeto localmente na sua máquina.
-
-### 🔗 Acesso Rápido à Aplicação
-* **Frontend (Dashboard)**: [Abrir Dashboard no Codespaces](https://studious-xylophone-74gwg4447qj2w674-5173.app.github.dev) *(Nota: Certifique-se de que os servidores do backend e frontend estejam rodando no seu ambiente codespaces).*
+* **Painel de Indicadores:** Visualização clara de métricas e dados de vendas atualizados.
+* **Gerenciamento Completo (CRUD):** Adição, listagem, edição e remoção de registros de forma fluida.
+* **Interface Responsiva:** Layout adaptado para diferentes tamanhos de tela.
+* **Arquitetura Limpa:** Separação clara entre as pastas de frontend e backend, facilitando a manutenção e escalabilidade.
 
 ---
 
-### 💻 Executando Localmente
+## 📁 Estrutura do Repositório
 
-Se preferir clonar e rodar o projeto na sua máquina:
+```text
+Dashboard-de-vendas/
+├── backend/          # Servidor Node.js, rotas da API e banco SQLite
+└── frontend/         # Aplicação React e interface de usuário
 
-1. **Clone o repositório**:
-   ```bash
-   git clone [https://github.com/seu-usuario/Dashboard-de-vendas.git](https://github.com/seu-usuario/Dashboard-de-vendas.git)
-   cd Dashboard-de-vendas
