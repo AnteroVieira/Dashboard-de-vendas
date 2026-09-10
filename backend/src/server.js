@@ -1,51 +1,44 @@
 import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import productRoutes from './routes/productRoutes.js';
-
-dotenv.config();
+import { openDb } from './db/connection.js';
 
 const app = express();
-const server = http.createServer(app);
 
-// Habilita o CORS para permitir requisições do frontend no Codespaces
-app.use(cors({
-  origin: '*', // Permite qualquer origem do Codespaces
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
-
+// Libera o CORS para qualquer frontend (como o seu Surge)
+app.use(cors());
 app.use(express.json());
 
-// Configuração do Socket.io em tempo real
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
+// Rota para listar produtos
+app.get('/api/produtos', async (req, res) => {
+  try {
+    const db = await openDb();
+    const produtos = await db.all('SELECT * FROM produtos');
+    res.json(produtos);
+  } catch (error) {
+    console.error('Erro ao listar produtos:', error);
+    res.status(500.0).json({ error: 'Erro interno no servidor' });
   }
 });
 
-io.on('connection', (socket) => {
-  console.log(`Um usuário se conectou: ${socket.id}`);
+// Rota para cadastrar produto
+app.post('/api/produtos', async (req, res) => {
+  try {
+    const { nome, categoria, preco, estoque } = req.body;
+    const db = await openDb();
+    
+    const result = await db.run(
+      'INSERT INTO produtos (nome, categoria, PRECO, estoque) VALUES (?, ?, ?, ?)',
+      [nome, categoria, preco, estoque]
+    );
 
-  socket.on('disconnect', () => {
-    console.log(`Usuário desconectado: ${socket.id}`);
-  });
+    res.status(201).json({ id: result.lastID, message: 'Produto cadastrado com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao cadastrar produto:', error);
+    res.status(500.0).json({ error: 'Erro interno no servidor' });
+  }
 });
 
-// Disponibiliza o io globalmente ou nas rotas se necessário
-app.use((req, res, next) => {
-  req.io = io;
-  next();
-});
-
-// Rotas da API
-app.use('/api', productRoutes);
-
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
