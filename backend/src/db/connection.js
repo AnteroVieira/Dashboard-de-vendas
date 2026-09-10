@@ -13,7 +13,7 @@ export async function openDb() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
       categoria TEXT NOT NULL,
-      preco REAL NOT NULL,
+      PRECO REAL NOT NULL,
       estoque INTEGER NOT NULL
     )
   `);
