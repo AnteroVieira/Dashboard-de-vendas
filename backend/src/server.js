@@ -18,11 +18,11 @@ app.get('/', (req, res) => {
   res.json({ status: 'API online!' });
 });
 
-// Handlers de produtos
+// Handlers de produtos com a query SQL corrigida
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
-    const produtos = await db.all();
+    const produtos = await db.all('SELECT * FROM produtos');
     res.json(produtos);
   } catch (error) {
     console.error('Erro ao listar:', error);
