@@ -9,7 +9,7 @@ export default function App() {
   const [estoque, setEstoque] = useState('');
 
  
-  const API_URL = 'https://dashboard-de-vendas-bzyq.onrender.com/api/produtos';
+  const API_URL = 'https://dashboard-de-vendas-bzyq.onrender.com/produtos';
 
   const categoriasOpcoes = [
     'Móveis',

@@ -4,10 +4,11 @@ import { openDb } from './db/connection.js';
 
 const app = express();
 
+// Ativa o CORS para permitir requisições do Surge e de qualquer lugar
 app.use(cors());
 app.use(express.json());
 
-// Rota raiz para o Render não dar Not Found
+// Rota raiz
 app.get('/', (req, res) => {
   res.json({ status: 'API do Dashboard de Vendas está online e funcionando!' });
 });
@@ -16,7 +17,7 @@ app.get('/', (req, res) => {
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
-    const produtos = await db.all();
+    const produtos = await db.all('SELECT * FROM produtos');
     res.json(produtos);
   } catch (error) {
     console.error('Erro ao listar:', error);
@@ -34,7 +35,7 @@ const cadastrarProduto = async (req, res) => {
     const db = await openDb();
     
     const result = await db.run(
-      'INSERT INTO produtos (nome, categoria, PRECO, estoque) VALUES (?, ?, ?, ?)',
+      'INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)',
       [nome, categoria, preco, estoque]
     );
 
