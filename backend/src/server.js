@@ -4,20 +4,25 @@ import { openDb } from './db/connection.js';
 
 const app = express();
 
-// Ativa o CORS para permitir requisições do Surge e de qualquer lugar
-app.use(cors());
+// Configuração explícita do CORS para aceitar qualquer origem e método
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
-// Rota raiz
+// Rota raiz para teste
 app.get('/', (req, res) => {
-  res.json({ status: 'API do Dashboard de Vendas está online e funcionando!' });
+  res.json({ status: 'API online!' });
 });
 
-// Handlers de listagem
+// Handlers de produtos
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
-    const produtos = await db.all('SELECT * FROM produtos');
+    const produtos = await db.all();
     res.json(produtos);
   } catch (error) {
     console.error('Erro ao listar:', error);
@@ -28,7 +33,6 @@ const listarProdutos = async (req, res) => {
 app.get('/produtos', listarProdutos);
 app.get('/api/produtos', listarProdutos);
 
-// Handlers de cadastro
 const cadastrarProduto = async (req, res) => {
   try {
     const { nome, categoria, preco, estoque } = req.body;
