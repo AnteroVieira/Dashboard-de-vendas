@@ -7,12 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rota raiz para teste de status
+// Rota raiz para o Render não dar Not Found
 app.get('/', (req, res) => {
-  res.json({ status: 'API online!' });
+  res.json({ status: 'API do Dashboard de Vendas está online e funcionando!' });
 });
 
-// Handler unificado para listar produtos (funciona com /produtos e /api/produtos)
+// Handlers de listagem
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
@@ -27,7 +27,7 @@ const listarProdutos = async (req, res) => {
 app.get('/produtos', listarProdutos);
 app.get('/api/produtos', listarProdutos);
 
-// Handler unificado para cadastrar produtos (funciona com /produtos e /api/produtos)
+// Handlers de cadastro
 const cadastrarProduto = async (req, res) => {
   try {
     const { nome, categoria, preco, estoque } = req.body;
