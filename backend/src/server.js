@@ -13,6 +13,8 @@ app.use(cors());
 app.use(express.json());
 
 // --- ROTAS DA API ---
+
+// Listar produtos
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
@@ -27,14 +29,20 @@ const listarProdutos = async (req, res) => {
 app.get('/produtos', listarProdutos);
 app.get('/api/produtos', listarProdutos);
 
+// Cadastrar produto
 const cadastrarProduto = async (req, res) => {
   try {
     const { nome, categoria, preco, estoque } = req.body;
+    
+    // Garante conversão numérica correta
+    const precoNum = parseFloat(preco) || 0;
+    const estoqueNum = parseInt(estoque, 10) || 0;
+
     const db = await openDb();
     
     const result = await db.run(
       'INSERT INTO produtos (nome, categoria, preco, estoque) VALUES (?, ?, ?, ?)',
-      [nome, categoria, preco, estoque]
+      [nome, categoria, precoNum, estoqueNum]
     );
 
     res.status(201).json({ id: result.lastID, message: 'Cadastrado com sucesso!' });
@@ -47,12 +55,32 @@ const cadastrarProduto = async (req, res) => {
 app.post('/produtos', cadastrarProduto);
 app.post('/api/produtos', cadastrarProduto);
 
+// Deletar produto por ID (Essencial para o botão excluir funcionar)
+const deletarProduto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await openDb();
+    
+    const result = await db.run('DELETE FROM produtos WHERE id = ?', [id]);
+    
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Produto não encontrado' });
+    }
+
+    res.json({ message: 'Produto excluído com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao deletar:', error);
+    res.status(500).json({ error: 'Erro interno' });
+  }
+};
+
+app.delete('/produtos/:id', deletarProduto);
+app.delete('/api/produtos/:id', deletarProduto);
+
 // --- SERVIR O FRONTEND (REACT) EM PRODUÇÃO ---
-// Aponta para a pasta dist gerada pelo build do frontend
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 app.use(express.static(frontendDistPath));
 
-// Qualquer rota desconhecida redireciona para o index.html do React (essencial para SPAs)
 app.get('*', (req, res) => {
   res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
