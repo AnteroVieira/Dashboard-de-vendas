@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// URL do backend hospedado no Render (com https explícito)
-const API_URL = 'https://dashboard-de-vendas-bzyq.onrender.com';
+// Como o backend vai servir o frontend na mesma origem, a URL base fica vazia (relativa)
+const API_URL = '';
 
 function App() {
   const [produtos, setProdutos] = useState([]);
@@ -88,13 +88,19 @@ function App() {
 
         <div style={{ marginBottom: '10px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>Categoria:</label>
-          <input
-            type="text"
+          <select
             value={categoria}
             onChange={(e) => setCategoria(e.target.value)}
             required
-            style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-          />
+            style={{ width: '100%', padding: '8px', boxSizing: 'border-box', background: 'white' }}
+          >
+            <option value="">Selecione uma categoria...</option>
+            <option value="Móveis">Móveis</option>
+            <option value="Informática">Informática</option>
+            <option value="Eletrônicos">Eletrônicos</option>
+            <option value="Vestuário">Vestuário</option>
+            <option value="Geral">Geral</option>
+          </select>
         </div>
 
         <div style={{ marginBottom: '10px' }}>

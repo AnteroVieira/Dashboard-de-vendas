@@ -1,29 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { openDb } from './db/connection.js';
 
-const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Middleware de CORS ultra permissivo e manual para garantir o preflight
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Rota raiz para teste
-app.get('/', (req, res) => {
-  res.json({ status: 'API online!' });
-});
-
-// Listar produtos
+// --- ROTAS DA API ---
 const listarProdutos = async (req, res) => {
   try {
     const db = await openDb();
@@ -38,7 +27,6 @@ const listarProdutos = async (req, res) => {
 app.get('/produtos', listarProdutos);
 app.get('/api/produtos', listarProdutos);
 
-// Cadastrar produtos
 const cadastrarProduto = async (req, res) => {
   try {
     const { nome, categoria, preco, estoque } = req.body;
@@ -58,6 +46,16 @@ const cadastrarProduto = async (req, res) => {
 
 app.post('/produtos', cadastrarProduto);
 app.post('/api/produtos', cadastrarProduto);
+
+// --- SERVIR O FRONTEND (REACT) EM PRODUÇÃO ---
+// Aponta para a pasta dist gerada pelo build do frontend
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDistPath));
+
+// Qualquer rota desconhecida redireciona para o index.html do React (essencial para SPAs)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDistPath, 'index.html'));
+});
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
