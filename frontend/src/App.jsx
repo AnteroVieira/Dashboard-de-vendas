@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Como o backend vai servir o frontend na mesma origem, a URL base fica vazia (relativa)
 const API_URL = '';
 
 function App() {
@@ -13,7 +12,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
 
-  // Função para buscar produtos cadastrados
   const buscarProdutos = async () => {
     try {
       const response = await fetch(`${API_URL}/produtos`);
@@ -30,11 +28,19 @@ function App() {
     buscarProdutos();
   }, []);
 
-  // Função para cadastrar um novo produto
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErro('');
+
+    // Garante que o preço seja convertido corretamente para número (substituindo vírgula por ponto se necessário)
+    const precoFormatado = parseFloat(preco.toString().replace(',', '.'));
+
+    if (isNaN(precoFormatado)) {
+      setErro('Por favor, insira um preço válido.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch(`${API_URL}/produtos`, {
@@ -45,14 +51,13 @@ function App() {
         body: JSON.stringify({
           nome,
           categoria,
-          preco: Number(preco),
+          preco: precoFormatado,
           estoque: Number(estoque),
         }),
       });
 
       if (!response.ok) throw new Error('Erro ao cadastrar produto');
 
-      // Limpa os campos e atualiza a lista
       setNome('');
       setCategoria('');
       setPreco('');
@@ -66,8 +71,25 @@ function App() {
     }
   };
 
+  // Função para deletar um produto específico
+  const handleDelete = async (id) => {
+    if (!window.confirm('Tem certeza que deseja excluir este produto?')) return;
+
+    try {
+      const response = await fetch(`${API_URL}/produtos/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Erro ao deletar produto');
+      await buscarProdutos();
+    } catch (err) {
+      console.error('Erro ao deletar:', err);
+      setErro('Não foi possível excluir o produto.');
+    }
+  };
+
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Dashboard de Vendas - Cadastro de Produtos</h1>
 
       {erro && <div style={{ color: 'red', marginBottom: '15px' }}>{erro}</div>}
@@ -147,6 +169,7 @@ function App() {
               <th style={{ padding: '10px', border: '1px solid #ddd' }}>Categoria</th>
               <th style={{ padding: '10px', border: '1px solid #ddd' }}>Preço</th>
               <th style={{ padding: '10px', border: '1px solid #ddd' }}>Estoque</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -155,8 +178,18 @@ function App() {
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{p.id}</td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{p.nome}</td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{p.categoria}</td>
-                <td style={{ padding: '10px', border: '1px solid #ddd' }}>R$ {Number(p.preco).toFixed(2)}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                  R$ {Number(p.preco || 0).toFixed(2)}
+                </td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{p.estoque}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    style={{ background: '#dc3545', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' }}
+                  >
+                    Excluir
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
