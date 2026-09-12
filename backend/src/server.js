@@ -34,9 +34,9 @@ const cadastrarProduto = async (req, res) => {
   try {
     const { nome, categoria, preco, estoque } = req.body;
     
-    // Garante conversão numérica correta
-    const precoNum = parseFloat(preco) || 0;
-    const estoqueNum = parseInt(estoque, 10) || 0;
+    // Converte explicitamente para garantir tipos numéricos válidos no SQLite
+    const precoNum = Number(preco) || 0;
+    const estoqueNum = Number(estoque) || 0;
 
     const db = await openDb();
     
@@ -55,7 +55,7 @@ const cadastrarProduto = async (req, res) => {
 app.post('/produtos', cadastrarProduto);
 app.post('/api/produtos', cadastrarProduto);
 
-// Deletar produto por ID (Essencial para o botão excluir funcionar)
+// Deletar produto por ID
 const deletarProduto = async (req, res) => {
   try {
     const { id } = req.params;
